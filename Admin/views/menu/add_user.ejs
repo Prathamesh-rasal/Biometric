@@ -1,0 +1,135 @@
+
+<% layout("/layouts/boilerplate") %>
+
+<div class="add-user-page">
+    <div class="add-user-header">
+        <h2>Add New User</h2>
+        <p>Register user details and capture a face image.</p>
+    </div>
+
+    <form action="/addUser" method="POST" id="addUserForm">
+        <input type="hidden" id="face_image" name="face_image">
+        <input
+            type="hidden"
+            id="face_features"
+            name="face_features"
+        >
+        <div class="user-form-card">
+            <h3>User Details</h3>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control"
+                           id="username" name="username" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="department" class="form-label">Department</label>
+                    <input type="text" class="form-control"
+                           id="department" name="department" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control"
+                           id="email" name="email" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="contact_number" class="form-label">
+                        Contact Number
+                    </label>
+                    <input type="tel" class="form-control"
+                           id="contact_number" name="contact_number"
+                           inputmode="numeric" pattern="[0-9]{10}"
+                           maxlength="10" minlength="10" required>
+                </div>
+
+                <div class="col-12">
+                    <label for="password" class="form-label">Set Password</label>
+                    <input type="password" class="form-control"
+                           id="password" name="password"
+                           minlength="8" required>
+                </div>
+                                <div class="col-md-6">
+                    <label for="start_working_time" class="form-label">
+                        Start Working Time
+                    </label>
+                    <input
+                        type="time"
+                        class="form-control"
+                        id="start_working_time"
+                        name="start_working_time"
+                        required
+                    >
+                </div>
+
+                <div class="col-md-6">
+                    <label for="end_working_time" class="form-label">
+                        End Working Time
+                    </label>
+                    <input
+                        type="time"
+                        class="form-control"
+                        id="end_working_time"
+                        name="end_working_time"
+                        required
+                    >
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="camera-card">
+            <p class="text-center">Position your face inside the frame.</p>
+
+            <div class="camera-frame">
+                <video id="video" autoplay playsinline muted></video>
+                <canvas id="canvas" hidden></canvas>
+
+                <div class="face-guide" id="faceGuide"></div>
+
+                <div class="camera-placeholder" id="placeholder">
+                    <div class="camera-icon">📷</div>
+                    <p>Camera is not started</p>
+                </div>
+            </div>
+
+            <p id="status" class="status">
+                Click Start Camera to begin.
+            </p>
+
+            <div class="camera-buttons">
+                <button type="button" id="startBtn" class="btn btn-primary">
+                    Start Camera
+                </button>
+
+                <button type="button" id="captureBtn"
+                        class="btn btn-success" disabled>
+                    Capture Image
+                </button>
+            </div>
+
+            <div id="previewSection" class="preview-section" hidden>
+                <h4 class="text-center">Captured Image</h4>
+                <img id="preview" alt="Captured face preview">
+            </div>
+        </div>
+
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary"
+                    id="addUserBtn">
+                Add User
+            </button>
+
+            <button type="reset" class="btn btn-outline-secondary"
+                    id="clearBtn">
+                Clear Form
+            </button>
+        </div>
+    </form>
+</div>
+
+

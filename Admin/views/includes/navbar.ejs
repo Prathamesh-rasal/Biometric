@@ -1,0 +1,59 @@
+<style>
+  .btn-search{
+    background-color: #fe424d;
+    color: #fff;
+    border-radius: 25px;
+    padding: 0 1rem 0 1rem;
+  }
+  .btn-search:hover{
+    background-color: #fe424d;
+    color: #fff;
+  }
+  .btn-search i{
+    display: inline;
+    margin-right: 0.5rem;
+  }
+  .search-inp{
+    border-radius: 25px;
+    padding: 0.5rem 3rem 0.5rem 3rem;
+    font-size: 1rem;
+
+  .custom-navbar{
+    background-color: #dbe4ee;
+  }
+  }
+  .navbar{
+    background-color: white !important;
+  }
+</style>
+
+
+<nav class="navbar navbar-expand-md custom-navbar border-bottom sticky-top "  >
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/"><i class="fa-brands fa-pandora"></i></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link" href="/">PSquare</a>
+      </div>
+
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/addUser">Add User</a>
+      </div>
+
+      <div class="navbar-nav ms-auto">
+        <!-- <a class="nav-link" href="/papers/create_one">Generate</a> -->
+        <% if(!currUser){ %>
+          <a class="nav-link" aria-current="page" href="/signup"><b>SignUp</b></a>
+          <a class="nav-link" href="/login"><b>Login</b></a>
+        <% } %>
+        <% if(currUser){ %>
+          <a class="nav-link" href="/logout"><b>Logout</b></a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>
