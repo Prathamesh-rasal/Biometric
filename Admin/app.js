@@ -138,7 +138,7 @@ app.post("/addUser", async (req, res) => {
         });
 
         await newUser.save();
-        flash("success", "User saved successfully!");
+        req.flash("success","User saved successfully!")
         res.redirect("/addUser");
     } catch (error) {
         console.error("Add user error:", error);
