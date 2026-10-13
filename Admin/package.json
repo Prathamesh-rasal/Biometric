@@ -1,4 +1,12 @@
+
 {
+  "name": "biometric-admin",
+  "version": "1.0.0",
+  "description": "Face Recognition Attendance System - Admin",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "connect-flash": "^0.1.1",
