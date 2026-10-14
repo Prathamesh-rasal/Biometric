@@ -1,2 +1,76 @@
 <% layout("/layouts/boilerplate") %>
-<h4>Location page</h4>
+<link rel="stylesheet" href="/css/setLocation.css">
+<form action="/setLocation" method="post">
+    <div class="setLocation text-center">
+        <h4>Get Current Location</h4>
+
+        <button type="button" id="getLocation" class="loc-btn">
+            Get Location
+        </button>
+
+        <div class="loc-data">
+            <p>Latitude: <span id="latitude"><%=admin.campusLocation.latitude %></span></p>
+            <p>Longitude: <span id="longitude"><%=admin.campusLocation.longitude %></span></p>
+        </div>
+
+        <input
+            type="hidden"
+            id="latitudeInput"
+            name="latitude"
+            value="<%= admin?.campusLocation?.latitude ?? '' %>"
+        >
+
+        <input
+            type="hidden"
+            id="longitudeInput"
+            name="longitude"
+            value="<%= admin?.campusLocation?.longitude ?? '' %>"
+        >
+
+
+
+        <div class="mb-3 mt-4">
+            <label for="radius" class="form-label" style="font-weight: bold;">Radius (1–100)Mtr</label>
+
+            <input
+                type="number"
+                id="radius"
+                name="radius"
+                class="form-control"
+                min="1"
+                max="100"
+                step="1"
+                required
+                value="<%= admin?.campusLocation?.radius ?? '' %>"
+            >
+
+            <small id="radiusError" class="text-danger"></small>
+        </div>
+
+        <button type="submit" id="saveBtn" class="btn btn-primary">
+            Save
+        </button>
+    </div>
+</form>
+
+
+
+
+<div class="setLocation">
+    <h4>College Location</h4>
+
+    <div
+        id="map"
+        data-lat="<%= admin.campusLocation.latitude %>"
+        data-lng="<%= admin.campusLocation.longitude %>"
+    ></div>
+</div>
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="/js/setLocation.js" defer></script>

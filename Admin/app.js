@@ -164,6 +164,57 @@ app.get('/addUser', (req, res) => {
   
 })
 
+app.post('/setLocation',async(req,res)=>{
+    try{
+        if (!req.session.adminId) {
+            return res.redirect("/login");
+        }
+        let { latitude, longitude, radius } = req.body;
+        latitude = Number(latitude);
+        longitude = Number(longitude);
+        radius = Number(radius);
+
+        const admin = await Admin.findByIdAndUpdate(req.session.adminId,{
+            $set: {
+            "campusLocation.latitude": latitude,
+            "campusLocation.longitude": longitude,
+            "campusLocation.radius": radius
+            }
+        },
+        { new: true, runValidators: true }
+        );
+
+        if (!admin) {
+        return res.redirect("/login");
+        }
+
+        req.flash("success", "Location updated successfully!");
+        res.redirect("/setLocation");
+        }
+    catch(err){
+        console.log(err)
+    }
+})
+
+app.get('/setLocation',async (req,res)=>{
+    try {
+        if (!req.session.adminId) {
+            req.flash("error","Please Signup/login first!")
+            return res.redirect("/signup");
+        } else{
+            const admin = await Admin.findById(req.session.adminId);
+            if (!admin) {
+                return res.redirect("/login");
+            }
+            
+            res.render("menu/setLocation.ejs",{admin})
+        }
+    }
+    catch(err){
+        console.log(err)
+    }
+})
+
 app.get('/home',(req,res)=>{
     try {
         if (!req.session.adminId) {
@@ -224,19 +275,7 @@ app.get('/about',(req,res)=>{
     }
 })
 
-app.get('/setLocation',(req,res)=>{
-    try {
-        if (!req.session.adminId) {
-            req.flash("error","Please Signup/login first!")
-            return res.redirect("/signup");
-        } else{
-        res.render("menu/setLocation.ejs")
-        }
-    }
-    catch(err){
-        console.log(err)
-    }
-})
+
 
 app.get('/signup', (req, res) => {
     res.render("users/signup.ejs")

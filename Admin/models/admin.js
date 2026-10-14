@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const User = require("./user");
 const adminSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -14,6 +13,18 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  campusLocation: {
+    latitude: {
+      type: Number
+    },
+    longitude: {
+      type: Number
+    },
+    radius: {
+      type: Number,
+      default: 100
+    }
+  }
 });
 
 module.exports = mongoose.model("Admin", adminSchema);
