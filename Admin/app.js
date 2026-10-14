@@ -165,7 +165,17 @@ app.get('/addUser', (req, res) => {
 })
 
 app.get('/home',(req,res)=>{
-    res.render("menu/home.ejs")
+    try {
+        if (!req.session.adminId) {
+            req.flash("error","Please Signup/login first!")
+            return res.redirect("/signup");
+        } else{
+        res.render("menu/home.ejs")
+        }
+    }
+    catch(err){
+        console.log(err)
+    }
 })
 
 app.post('/signup', async (req, res) => {
@@ -201,11 +211,31 @@ app.get('/logout',(req,res)=>{
 })
 
 app.get('/about',(req,res)=>{
-    res.render("menu/about.ejs")
+    try {
+        if (!req.session.adminId) {
+            req.flash("error","Please Signup/login first!")
+            return res.redirect("/signup");
+        } else{
+        res.render("menu/about.ejs")
+        }
+    }
+    catch(err){
+        console.log(err)
+    }
 })
 
 app.get('/setLocation',(req,res)=>{
-    res.render("menu/setLocation.ejs")
+    try {
+        if (!req.session.adminId) {
+            req.flash("error","Please Signup/login first!")
+            return res.redirect("/signup");
+        } else{
+        res.render("menu/setLocation.ejs")
+        }
+    }
+    catch(err){
+        console.log(err)
+    }
 })
 
 app.get('/signup', (req, res) => {
