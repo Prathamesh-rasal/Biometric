@@ -17,6 +17,7 @@ const LocalStrategy = require('passport-local')
 // const { isLoggedIn , isOwner} = require("./middlewares.js");
 
 const User = require("./models/user");
+const Admin = require("./models/admin");
 const bcrypt = require("bcrypt");
 const { env } = require("process");
 
@@ -76,7 +77,7 @@ app.use(express.json({
 app.use((req,res,next)=>{
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
-    res.locals.currUser = req.user
+    res.locals.adminId = req.session.adminId || null;
     next()
 })
 
@@ -149,11 +150,110 @@ app.post("/addUser", async (req, res) => {
 });
 
 app.get('/addUser', (req, res) => {
-  res.render("menu/add_user.ejs")
+    try {
+        if (!req.session.adminId) {
+            req.flash("error","Please Signup/login first!")
+            return res.redirect("/signup");
+        } else{
+            res.render("menu/add_user.ejs")
+        }
+    }
+    catch(err){
+        console.log(err)
+    }
+  
 })
 
-app.get("/", (req, res) => {
-  res.render("menu/home.ejs")
+app.get('/home',(req,res)=>{
+    res.render("menu/home.ejs")
+})
+
+app.post('/signup', async (req, res) => {
+    try{
+        let { username, contact, password } = req.body;
+        const existingName = await Admin.findOne({username: username.trim()});
+        const existingContact = await Admin.findOne({contact: contact.trim()});
+        if (existingName || existingContact) {
+            req.flash("error","Admin already exists with this name or contact number!")
+            return res.redirect("/signup");
+        }
+        const hashedPassword = await bcrypt.hash(password, 12);
+        const newAdmin = new Admin({
+            username: username.trim(),
+            contact: contact.trim(),
+            password: hashedPassword
+        })
+        await newAdmin.save();
+        req.session.adminId = newAdmin._id.toString();
+        res.redirect("/home");
+
+    }
+    catch(err){
+        console.log(err)
+    }
+    
+})
+
+app.get('/logout',(req,res)=>{
+    req.session.adminId = null;
+    req.flash("success","Logged out successfully!")
+    res.redirect("/login");
+})
+
+app.get('/about',(req,res)=>{
+    res.render("menu/about.ejs")
+})
+
+app.get('/setLocation',(req,res)=>{
+    res.render("menu/setLocation.ejs")
+})
+
+app.get('/signup', (req, res) => {
+    res.render("users/signup.ejs")
+})
+
+app.post('/login', async (req, res) => {
+    try{
+        let { contact, password } = req.body;
+
+        const checkContact = await Admin.findOne({contact: contact.trim()});
+        if (!checkContact) {
+            req.flash("error", "Invalid contact number!");
+            return res.redirect("/login");
+        }
+
+        const checkPassword = await bcrypt.compare(password,checkContact.password);
+
+        if (!checkPassword) {
+            req.flash("error", "Invalid password!");
+            return res.redirect("/login");
+        }
+
+        req.session.adminId = checkContact._id.toString();
+        res.redirect("/home");
+    }
+    catch(err){
+        console.log(err)
+    }
+})
+
+app.get('/login', (req, res) => {
+    res.render("users/login.ejs")
+})
+
+app.get("/", async(req, res) => {
+    try {
+        if (!req.session.adminId) {
+            req.flash("error","Please Signup/login first!")
+            return res.redirect("/signup");
+        } 
+        res.render("menu/home.ejs")
+
+    }
+    catch(err){
+        console.log(err)
+    }
+    
 })
 
 app.listen(3000, () => {
