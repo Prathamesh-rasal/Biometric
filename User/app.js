@@ -74,241 +74,165 @@ app.use((req,res,next)=>{
 
 
 
-// add fake data
-// app.get('/adddata', async (req, res) => {
-//     try {
-//         const userId = new mongoose.Types.ObjectId(
-//             "6ad269e1cb0db0e3ca989a1c"
-//         );
-
-//         const data = [
-//             ["2026-10-01", "Present", "09:00", "18:00", 540],
-//             ["2026-10-02", "Late", "09:30", "17:30", 480],
-//             ["2026-10-03", "Present", "09:00", "18:00", 540],
-//             ["2026-10-04", "Half-Day", "09:00", "13:00", 240],
-//             ["2026-10-05", "Present", "09:00", "18:00", 540],
-//             ["2026-10-06", "Absent", null, null, 0],
-//             ["2026-10-07", "Late", "09:45", "17:45", 480],
-//             ["2026-10-08", "Present", "09:00", "18:00", 540],
-//             ["2026-10-09", "Present", "09:05", "18:05", 540],
-//             ["2026-10-10", "Half-Day", "09:00", "12:30", 210],
-//             ["2026-10-11", "Present", "09:00", "18:00", 540],
-//             ["2026-10-12", "Absent", null, null, 0],
-//             ["2026-10-13", "Late", "09:40", "17:40", 480],
-//             ["2026-10-14", "Present", "09:00", "18:00", 540],
-//             ["2026-10-15", "Present", "09:00", "18:00", 540]
-//         ];
-
-//         function makeDate(date, time) {
-//             if (!time) return null;
-//             return new Date(`${date}T${time}:00+05:30`);
-//         }
-
-//         // MongoDB connection already established as app starts.
-//         const collection = mongoose.connection.collection("attendances");
-
-//         let inserted = 0;
-//         let skipped = 0;
-
-//         for (const [date, status, inTime, outTime, minutes] of data) {
-//             const existing = await collection.findOne({
-//                 userId,
-//                 date
-//             });
-
-//             if (existing) {
-//                 skipped++;
-//                 continue;
-//             }
-
-//             await collection.insertOne({
-//                 userId,
-//                 date,
-//                 checkIn: makeDate(date, inTime),
-//                 checkOut: makeDate(date, outTime),
-//                 status,
-//                 workingMinutes: minutes,
-//                 createdAt: new Date(),
-//                 updatedAt: new Date()
-//             });
-
-//             inserted++;
-//         }
-
-//         return res.status(200).json({
-//             message: "Attendance data processed successfully",
-//             inserted,
-//             skipped,
-//             total: data.length
-//         });
-
-//     } catch (error) {
-//         console.error("Attendance insert error:", error);
-
-//         return res.status(500).json({
-//             message: "Failed to add attendance data",
-//             error: error.message
-//         });
-//     }
-// });
 
 
-// app.post('/markAttendance', async (req, res) => {
-//     try {
-//         const { face_features, latitude, longitude } = req.body;
-//         const userId = req.session.userId;
 
-//         if (!userId) {
-//             req.flash("error", "Please login first.");
-//             return res.redirect("/login");
-//         }
+app.post('/markAttendance', async (req, res) => {
+    try {
+        const { face_features, latitude, longitude } = req.body;
+        const userId = req.session.userId;
 
-//         if (
-//             !face_features ||
-//             latitude === undefined || latitude === "" ||
-//             longitude === undefined || longitude === ""
-//         ) {
-//             req.flash("error", "Face data and location are required.");
-//             return res.redirect("/markAttendance");
-//         }
+        if (!userId) {
+            req.flash("error", "Please login first.");
+            return res.redirect("/login");
+        }
 
-//         const x = await checkLocation(latitude, longitude, userId);
+        if (
+            !face_features ||
+            latitude === undefined || latitude === "" ||
+            longitude === undefined || longitude === ""
+        ) {
+            req.flash("error", "Face data and location are required.");
+            return res.redirect("/markAttendance");
+        }
 
-//         if (!x) {
-//             req.flash("error", "Location does not match.");
-//             return res.redirect("/markAttendance");
-//         }
+        const x = await checkLocation(latitude, longitude, userId);
 
-//         const y = await checkFace(face_features, userId);
+        if (!x) {
+            req.flash("error", "Location does not match.");
+            return res.redirect("/markAttendance");
+        }
 
-//         if (!y) {
-//             req.flash("error", "Face does not match.");
-//             return res.redirect("/markAttendance");
-//         }
+        const y = await checkFace(face_features, userId);
+
+        if (!y) {
+            req.flash("error", "Face does not match.");
+            return res.redirect("/markAttendance");
+        }
 
 
 
 
 
-//         // Face and location verification successful zalyanantar ha code run kar
+        // Face and location verification successful zalyanantar ha code run kar
 
-//         const user = await User.findById(req.session.userId);
+        const user = await User.findById(req.session.userId);
 
-//         if (!user) {        
-//             req.flash("error", "User not found.");
-//             return res.redirect("/markAttendance");
-//         }
+        if (!user) {        
+            req.flash("error", "User not found.");
+            return res.redirect("/markAttendance");
+        }
 
-//     // Today's date in India
-//         const today = new Intl.DateTimeFormat("en-CA", {
-//             timeZone: "Asia/Kolkata",
-//             year: "numeric",
-//             month: "2-digit",
-//             day: "2-digit"
-//                 }).format(new Date());
+    // Today's date in India
+        const today = new Intl.DateTimeFormat("en-CA", {
+            timeZone: "Asia/Kolkata",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+                }).format(new Date());
 
-//         // Get today's attendance record
-//         let attendance = await Attendance.findOne({
-//             userId: user._id,
-//             date: today
-//         });
+        // Get today's attendance record
+        let attendance = await Attendance.findOne({
+            userId: user._id,
+            date: today
+        });
 
-//         const now = new Date();
+        const now = new Date();
 
-//         // Convert HH:mm to minutes
-//         const timeToMinutes = (time) => {       
-//             const [hours, minutes] = time.split(":").map(Number);
-//             return hours * 60 + minutes;
-//         };
+        // Convert HH:mm to minutes
+        const timeToMinutes = (time) => {       
+            const [hours, minutes] = time.split(":").map(Number);
+            return hours * 60 + minutes;
+        };
 
-//         const startMinutes = timeToMinutes(user.start_working_time);
-//         const endMinutes = timeToMinutes(user.end_working_time);
+        const startMinutes = timeToMinutes(user.start_working_time);
+        const endMinutes = timeToMinutes(user.end_working_time);
 
-//         // Handle shifts that cross midnight
-//         const expectedMinutes =
-//             endMinutes > startMinutes
-//                 ? endMinutes - startMinutes
-//                 : endMinutes + 1440 - startMinutes;
+        // Handle shifts that cross midnight
+        const expectedMinutes =
+            endMinutes > startMinutes
+                ? endMinutes - startMinutes
+                : endMinutes + 1440 - startMinutes;
 
-//         if (!attendance) {      
-//             // FIRST SCAN: CHECK-IN
-//             const currentMinutes = timeToMinutes(
-//                 new Intl.DateTimeFormat("en-GB", {
-//                     timeZone: "Asia/Kolkata",
-//                     hour: "2-digit",
-//                     minute: "2-digit",
-//                     hourCycle: "h23"
-//                 }).format(now)
-//             );
+        if (!attendance) {      
+            // FIRST SCAN: CHECK-IN
+            const currentMinutes = timeToMinutes(
+                new Intl.DateTimeFormat("en-GB", {
+                    timeZone: "Asia/Kolkata",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hourCycle: "h23"
+                }).format(now)
+            );
 
-//     const status =
-//         currentMinutes > startMinutes ? "Late" : "Present";
+    const status =
+        currentMinutes > startMinutes ? "Late" : "Present";
 
-//         attendance = await Attendance.create({
-//             userId: user._id,
-//             date: today,
-//             checkIn: now,
-//             checkOut: null,
-//             status,
-//             workingMinutes: 0
-//         });
+        attendance = await Attendance.create({
+            userId: user._id,
+            date: today,
+            checkIn: now,
+            checkOut: null,
+            status,
+            workingMinutes: 0
+        });
 
-//         req.flash("success", "Check-in successful!");
-//         return res.redirect("/markAttendance");
-//         }
+        req.flash("success", "Check-in successful!");
+        return res.redirect("/markAttendance");
+        }
 
-//         // SECOND SCAN: CHECK-OUT
-//         if (!attendance.checkOut) {
-//             if (!attendance.checkIn) {      
-//                 req.flash("error", "Check-in record is missing.");
-//                 return res.redirect("/markAttendance");
-//             }
+        // SECOND SCAN: CHECK-OUT
+        if (!attendance.checkOut) {
+            if (!attendance.checkIn) {      
+                req.flash("error", "Check-in record is missing.");
+                return res.redirect("/markAttendance");
+            }
 
-//             if (now <= attendance.checkIn) {        
-//                 req.flash("error", "Check-out time must be after check-in.");
-//                 return res.redirect("/markAttendance");
-//             }
+            if (now <= attendance.checkIn) {        
+                req.flash("error", "Check-out time must be after check-in.");
+                return res.redirect("/markAttendance");
+            }
 
-//             const workingMinutes = Math.floor(
-//                 (now.getTime() - attendance.checkIn.getTime()) / 60000
-//             );
+            const workingMinutes = Math.floor(
+                (now.getTime() - attendance.checkIn.getTime()) / 60000
+            );
 
-//             let status;
+            let status;
 
-//             if (workingMinutes < expectedMinutes / 2) {
-//                 status = "Half-Day";
-//             } else if (attendance.status === "Late") {
-//                 status = "Late";
-//             } else {
-//                 status = "Present";
-//             }
+            if (workingMinutes < expectedMinutes / 2) {
+                status = "Half-Day";
+            } else if (attendance.status === "Late") {
+                status = "Late";
+            } else {
+                status = "Present";
+            }
 
-//             attendance.checkOut = now;
-//             attendance.workingMinutes = workingMinutes;
-//             attendance.status = status;
+            attendance.checkOut = now;
+            attendance.workingMinutes = workingMinutes;
+            attendance.status = status;
 
-//             await attendance.save();
+            await attendance.save();
 
-//             req.flash("success", "Check-out successful!");
-//             return res.redirect("/markAttendance");
-//         }
+            req.flash("success", "Check-out successful!");
+            return res.redirect("/markAttendance");
+        }
 
-//         // CHECK-IN AND CHECK-OUT ALREADY COMPLETED
-//         req.flash("error", "Your attendance is already completed for today.");
+        // CHECK-IN AND CHECK-OUT ALREADY COMPLETED
+        req.flash("error", "Your attendance is already completed for today.");
 
 
 
 
 
 
-//         return res.redirect("/markAttendance");
+        return res.redirect("/markAttendance");
 
-//     } catch (err) {
-//         console.error("Attendance route error:", err);
-//         req.flash("error", "Something went wrong.");
-//         return res.redirect("/markAttendance");
-//     }
-// });
+    } catch (err) {
+        console.error("Attendance route error:", err);
+        req.flash("error", "Something went wrong.");
+        return res.redirect("/markAttendance");
+    }
+});
 
 
 
