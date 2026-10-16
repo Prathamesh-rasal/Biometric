@@ -91,7 +91,6 @@ app.post("/addUser", async (req, res) => {
             contact_number,
             password,
             face_features,
-            face_image,
             start_working_time,
             end_working_time
         } = req.body;
@@ -127,13 +126,13 @@ app.post("/addUser", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 12);
 
         const newUser = new User({
+            adminId: req.session.adminId,
             username,
             department,
             email,
             contact_number,
             password: hashedPassword,
             face_features: features,
-            face_image: face_image || null,
             start_working_time,
             end_working_time
         });
@@ -215,19 +214,39 @@ app.get('/setLocation',async (req,res)=>{
     }
 })
 
-app.get('/home',(req,res)=>{
+app.get('/home',async(req,res)=>{
     try {
         if (!req.session.adminId) {
-            req.flash("error","Please Signup/login first!")
-            return res.redirect("/signup");
-        } else{
-        res.render("menu/home.ejs")
+            req.flash("error", "Please login as admin first");
+            return res.redirect("/login");
         }
-    }
-    catch(err){
-        console.log(err)
+
+        const admin = await Admin.findById(req.session.adminId);
+
+        if (!admin) {
+            req.session.adminId = null;
+            req.flash("error", "Admin not found. Please login again.");
+            return res.redirect("/login");
+        }
+
+        const users = await User.find({
+            adminId: admin._id
+        }).sort({ username: 1 });
+
+        const totalUsers = users.length;
+
+        return res.render("menu/home.ejs", {
+            admin,
+            users,
+            totalUsers
+        });
+
+    } catch (error) {
+        console.error("Admin dashboard error:", error);
+        return res.status(500).send("Unable to load admin dashboard");
     }
 })
+
 
 app.post('/signup', async (req, res) => {
     try{

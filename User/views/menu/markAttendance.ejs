@@ -1,0 +1,64 @@
+
+<% layout("/layouts/boilerplate") %>
+
+<div class="add-user-page">
+    <div class="add-user-header">
+        <h2>Attendance</h2>
+        <p>Mark your attendance by scanning your face when you arrive at and leave college.</p>
+    </div>
+
+    <form action="/markAttendance" method="POST" id="addUserForm">
+
+        <div class="camera-card">
+            <p class="text-center">Position your face inside the frame.</p>
+
+            <div class="camera-frame">
+                <video id="video" autoplay playsinline muted></video>
+                <canvas id="canvas" hidden></canvas>
+
+                <div class="face-guide" id="faceGuide"></div>
+
+                <div class="camera-placeholder" id="placeholder">
+                    <div class="camera-icon">📷</div>
+                    <p>Camera is not started</p>
+                </div>
+            </div>
+
+            <p id="status" class="status">
+                Click Start Camera to begin.
+            </p>
+
+            <div class="camera-buttons">
+                <button type="button" id="startBtn" class="btn btn-primary">
+                    Start Camera
+                </button>
+
+                <button type="button" id="captureBtn"
+                        class="btn btn-success" disabled>
+                    Capture Image
+                </button>
+            </div>
+
+            <div id="previewSection" class="preview-section" hidden>
+                <h4 class="text-center">Captured Image</h4>
+                <img id="preview" alt="Captured face preview">
+            </div>
+        </div>
+        <input type="hidden" name="face_image" id="face_image">
+        <input type="hidden" name="face_features" id="face_features">
+        <input type="hidden" name="latitude" id="latitude">
+        <input type="hidden" name="longitude" id="longitude">
+
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary"
+                    id="addUserBtn">
+                Submit
+            </button>
+        </div>
+    </form>
+</div>
+<script src="/js/face-api.min.js"></script>
+<script src="/js/attendance.js" defer></script>
+
+

@@ -1,65 +1,108 @@
 <style>
-  .btn-search{
-    background-color: #fe424d;
-    color: #fff;
-    border-radius: 25px;
-    padding: 0 1rem 0 1rem;
+  .custom-navbar {
+    background-color: #dbe4ee !important;
+    padding: 0.75rem 1.5rem;
   }
-  .btn-search:hover{
-    background-color: #fe424d;
-    color: #fff;
-  }
-  .btn-search i{
-    display: inline;
-    margin-right: 0.5rem;
-  }
-  .search-inp{
-    border-radius: 25px;
-    padding: 0.5rem 3rem 0.5rem 3rem;
-    font-size: 1rem;
 
-  .custom-navbar{
-    background-color: #dbe4ee;
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #fe424d !important;
   }
+
+  .brand-icon {
+    font-size: 1.6rem;
   }
-  .navbar{
-    background-color: white !important;
+
+  .brand-name {
+    letter-spacing: 0.5px;
+  }
+
+  .custom-navbar .nav-link {
+    color: #222 !important;
+    font-weight: 500;
+    margin: 0 0.25rem;
+    transition: color 0.2s ease;
+  }
+
+  .custom-navbar .nav-link:hover {
+    color: #fe424d !important;
+  }
+
+  .custom-navbar .auth-link {
+    font-weight: 600;
+  }
+
+  .custom-navbar .logout-link {
+    color: #dc3545 !important;
+  }
+
+  .custom-navbar .logout-link:hover {
+    color: #b02a37 !important;
+  }
+
+  @media (max-width: 767px) {
+    .custom-navbar {
+      padding: 0.75rem 1rem;
+    }
+
+    .custom-navbar .navbar-nav {
+      margin-top: 0.5rem;
+    }
+
+    .custom-navbar .nav-link {
+      padding: 0.5rem 0;
+    }
   }
 </style>
 
+<nav class="navbar navbar-expand-md custom-navbar border-bottom sticky-top mb-5">
+  <div class="container-fluid">
 
-<nav class="navbar navbar-expand-md custom-navbar border-bottom sticky-top "  >
-  <div class="container-fluid ">
-    <a class="navbar-brand brand-logo" href="/">
+    <!-- Brand -->
+    <a class="navbar-brand" href="/home">
       <span class="brand-icon">
         <i class="fa-brands fa-pandora"></i>
       </span>
-      <span class="brand-name">PSquare<span class="brand-dot">.</span></span>
+      <span class="brand-name">PSquare</span>
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" >
+
+    <!-- Mobile Toggle -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
+
+    <!-- Navbar Links -->
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <!-- <div class="navbar-nav">
-            <a class="nav-link" href="/">PSquare</a>
-      </div> -->
 
       <div class="navbar-nav ms-auto">
-        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/home">Home</a>
         <a class="nav-link" href="/addUser">Add User</a>
         <a class="nav-link" href="/setLocation">Set Location</a>
         <a class="nav-link" href="/about">About</a>
       </div>
 
-      <div class="navbar-nav ms-auto">
-        <% if(!adminId){ %>
-          <a class="nav-link" aria-current="page" href="/signup"><b>SignUp</b></a>
-          <a class="nav-link" href="/login"><b>Login</b></a>
-        <% } %>
-        <% if(adminId){ %>
-          <a class="nav-link" href="/logout"><b>Logout</b></a>
+      <!-- Authentication Links -->
+      <div class="navbar-nav ms-md-3">
+        <% if (!adminId) { %>
+          <a class="nav-link auth-link" href="/signup">Sign Up</a>
+          <a class="nav-link auth-link" href="/login">Login</a>
+        <% } else { %>
+          <a class="nav-link logout-link" href="/logout">Logout</a>
         <% } %>
       </div>
+
     </div>
   </div>
 </nav>

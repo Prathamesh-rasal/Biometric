@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
+    adminId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Admin",
+        required: true
+    },
     username: {
         type: String,
         required: true
@@ -37,10 +42,6 @@ const userSchema = new mongoose.Schema({
             validator: values => values.length === 128,
             message: "Face descriptor must contain 128 values."
         }
-    },
-    face_image: {
-        type: String,
-        default: null
     }
 });
 

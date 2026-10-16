@@ -1,0 +1,103 @@
+<style>
+  .custom-navbar {
+    background-color: #dbe4ee !important;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .custom-navbar .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fe424d !important;
+  }
+
+  .brand-icon {
+    font-size: 1.6rem;
+  }
+
+  .brand-name {
+    letter-spacing: 0.5px;
+  }
+
+  .custom-navbar .nav-link {
+    color: #222 !important;
+    font-weight: 500;
+    margin: 0 0.25rem;
+    transition: color 0.2s ease;
+  }
+
+  .custom-navbar .nav-link:hover {
+    color: #fe424d !important;
+  }
+
+  .custom-navbar .logout-link {
+    color: #dc3545 !important;
+    font-weight: 600;
+  }
+
+  .custom-navbar .logout-link:hover {
+    color: #b02a37 !important;
+  }
+
+  @media (max-width: 767px) {
+    .custom-navbar {
+      padding: 0.75rem 1rem;
+    }
+
+    .custom-navbar .navbar-nav {
+      margin-top: 0.5rem;
+    }
+
+    .custom-navbar .nav-link {
+      padding: 0.5rem 0;
+    }
+  }
+</style>
+
+<nav class="navbar navbar-expand-md custom-navbar border-bottom sticky-top mb-5">
+  <div class="container-fluid">
+
+    <!-- Brand -->
+    <a class="navbar-brand" href="/home">
+      <span class="brand-icon">
+        <i class="fa-brands fa-pandora"></i>
+      </span>
+      <span class="brand-name">PSquare</span>
+    </a>
+
+    <!-- Mobile Menu Button -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#userNavbar"
+      aria-controls="userNavbar"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navigation Links -->
+    <div class="collapse navbar-collapse" id="userNavbar">
+
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="/home">Home</a>
+        <a class="nav-link" href="/markAttendance">Mark Attendance</a>
+        <a class="nav-link" href="/about">About</a>
+      </div>
+
+      <!-- Logout -->
+      <div class="navbar-nav ms-md-3">
+        <% if (userId) { %>
+          <a class="nav-link logout-link" href="/logout">
+            Logout
+          </a>
+        <% } %>
+      </div>
+
+    </div>
+  </div>
+</nav>
