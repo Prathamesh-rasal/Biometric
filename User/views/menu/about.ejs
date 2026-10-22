@@ -1,2 +1,274 @@
+
 <% layout("/layouts/boilerplate") %>
-<h4>About page</h4>
+
+<div class="container py-4 py-md-5">
+
+    <!-- Hero Section -->
+    <div class="rounded-4 p-4 p-md-5 mb-4 text-white shadow-sm"
+         style="background: linear-gradient(135deg, #0f172a, #2563eb);">
+
+        <span class="badge rounded-pill bg-light text-primary px-3 py-2 mb-3">
+            User Portal
+        </span>
+
+        <h1 class="fw-bold mb-3">
+            About Our Attendance System
+        </h1>
+
+        <p class="mb-0 opacity-75" style="max-width: 720px; line-height: 1.9;">
+            A smart digital attendance platform designed to make
+            attendance tracking simple, convenient, and organized
+            through face recognition and location verification.
+        </p>
+
+    </div>
+
+    <!-- Introduction -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4 p-md-5">
+
+            <h4 class="fw-bold mb-3">
+                <i class="bi bi-info-circle text-primary me-2"></i>
+                What Is This System?
+            </h4>
+
+            <p class="text-secondary" style="line-height: 1.9;">
+                The Biometric Attendance System is a web-based application
+                that helps users record and track their attendance digitally.
+                It maintains attendance records, check-in and check-out times,
+                working duration, and attendance status.
+            </p>
+
+            <p class="text-secondary mb-0" style="line-height: 1.9;">
+                Users can mark their attendance according to the system's
+                verification requirements and view their previous attendance
+                records whenever needed.
+            </p>
+
+        </div>
+    </div>
+
+    <!-- Features -->
+    <h4 class="fw-bold mb-3">System Features</h4>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-inline-flex p-3 rounded-3
+                                bg-primary bg-opacity-10 text-primary mb-3">
+                        <i class="bi bi-person-bounding-box fs-3"></i>
+                    </div>
+
+                    <h5 class="fw-bold">Face Recognition</h5>
+
+                    <p class="text-secondary mb-0">
+                        Helps verify your registered face before
+                        recording attendance.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-inline-flex p-3 rounded-3
+                                bg-success bg-opacity-10 text-success mb-3">
+                        <i class="bi bi-geo-alt fs-3"></i>
+                    </div>
+
+                    <h5 class="fw-bold">Location Verification</h5>
+
+                    <p class="text-secondary mb-0">
+                        Checks whether your current location satisfies
+                        the configured attendance location requirements.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-inline-flex p-3 rounded-3
+                                bg-info bg-opacity-10 text-info mb-3">
+                        <i class="bi bi-clock-history fs-3"></i>
+                    </div>
+
+                    <h5 class="fw-bold">Check-In & Check-Out</h5>
+
+                    <p class="text-secondary mb-0">
+                        Records your attendance entry and exit times
+                        and calculates working duration when available.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-inline-flex p-3 rounded-3
+                                bg-warning bg-opacity-10 text-warning mb-3">
+                        <i class="bi bi-calendar-check fs-3"></i>
+                    </div>
+
+                    <h5 class="fw-bold">Attendance History</h5>
+
+                    <p class="text-secondary mb-0">
+                        View your previous attendance dates, recorded
+                        times, and attendance status.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-inline-flex p-3 rounded-3
+                                bg-danger bg-opacity-10 text-danger mb-3">
+                        <i class="bi bi-file-earmark-arrow-down fs-3"></i>
+                    </div>
+
+                    <h5 class="fw-bold">Download Reports</h5>
+
+                    <p class="text-secondary mb-0">
+                        Download your attendance history in Excel
+                        or PDF format, where these options are available.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-inline-flex p-3 rounded-3
+                                bg-secondary bg-opacity-10 text-secondary mb-3">
+                        <i class="bi bi-shield-check fs-3"></i>
+                    </div>
+
+                    <h5 class="fw-bold">Verified Attendance</h5>
+
+                    <p class="text-secondary mb-0">
+                        Uses configured verification checks to help
+                        maintain reliable attendance records.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- How It Works -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4 p-md-5">
+
+            <h4 class="fw-bold mb-4">
+                <i class="bi bi-list-check text-primary me-2"></i>
+                How to Use the System
+            </h4>
+
+            <div class="d-flex gap-3 mb-4">
+                <div class="rounded-circle bg-primary bg-opacity-10
+                            text-primary d-flex align-items-center
+                            justify-content-center flex-shrink-0"
+                     style="width: 45px; height: 45px;">
+                    <i class="bi bi-box-arrow-in-right fs-5"></i>
+                </div>
+
+                <div>
+                    <h6 class="fw-bold mb-1">Step 1: Log In</h6>
+                    <p class="text-secondary mb-0">
+                        Log in to your account using your registered credentials.
+                    </p>
+                </div>
+            </div>
+
+            <div class="d-flex gap-3 mb-4">
+                <div class="rounded-circle bg-primary bg-opacity-10
+                            text-primary d-flex align-items-center
+                            justify-content-center flex-shrink-0"
+                     style="width: 45px; height: 45px;">
+                    <i class="bi bi-camera fs-5"></i>
+                </div>
+
+                <div>
+                    <h6 class="fw-bold mb-1">Step 2: Verify Your Identity</h6>
+                    <p class="text-secondary mb-0">
+                        Complete face recognition and any required
+                        location verification.
+                    </p>
+                </div>
+            </div>
+
+            <div class="d-flex gap-3 mb-4">
+                <div class="rounded-circle bg-primary bg-opacity-10
+                            text-primary d-flex align-items-center
+                            justify-content-center flex-shrink-0"
+                     style="width: 45px; height: 45px;">
+                    <i class="bi bi-fingerprint fs-5"></i>
+                </div>
+
+                <div>
+                    <h6 class="fw-bold mb-1">Step 3: Mark Attendance</h6>
+                    <p class="text-secondary mb-0">
+                        Follow the attendance page instructions to
+                        complete check-in or check-out.
+                    </p>
+                </div>
+            </div>
+
+            <div class="d-flex gap-3">
+                <div class="rounded-circle bg-primary bg-opacity-10
+                            text-primary d-flex align-items-center
+                            justify-content-center flex-shrink-0"
+                     style="width: 45px; height: 45px;">
+                    <i class="bi bi-file-earmark-text fs-5"></i>
+                </div>
+
+                <div>
+                    <h6 class="fw-bold mb-1">Step 4: Review Your Records</h6>
+                    <p class="text-secondary mb-0">
+                        Check your attendance history and download
+                        available reports.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Important Note -->
+    <div class="alert alert-primary border-0 rounded-4 p-4 mb-4">
+        <h6 class="fw-bold">
+            <i class="bi bi-lightbulb me-2"></i>
+            Important Information
+        </h6>
+
+        <p class="mb-0" style="line-height: 1.8;">
+            Make sure you log in with your own account, allow camera and
+            location permissions when required, and verify that your
+            attendance has been recorded successfully.
+        </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center py-4">
+        <i class="bi bi-fingerprint display-4 text-primary"></i>
+
+        <h5 class="fw-bold mt-3">Biometric Attendance System</h5>
+
+        <p class="text-secondary mb-1">
+            Simple. Smart. Organized.
+        </p>
+
+        <small class="text-secondary">
+            &copy; <%= new Date().getFullYear() %> Biometric Attendance System
+        </small>
+    </div>
+
+</div>

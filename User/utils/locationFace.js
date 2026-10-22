@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Admin = require("../models/admin");
 
 const checkLocation = async (latitude, longitude, id) => {
+    console.log('current : ', latitude, longitude)
     try {
         const user = await User.findById(id);
 
@@ -22,6 +23,8 @@ const checkLocation = async (latitude, longitude, id) => {
         const campusLat = Number(admin.campusLocation.latitude);
         const campusLng = Number(admin.campusLocation.longitude);
         const radius = Number(admin.campusLocation.radius);
+        console.log('set location : ', campusLat, campusLng)
+        console.log('radius : ',radius)
 
         if (
             !Number.isFinite(lat) ||

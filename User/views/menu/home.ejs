@@ -173,7 +173,37 @@
     <!-- Attendance History -->
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-4">
-            <h5 class="fw-bold mb-3">My Attendance History</h5>
+            <!-- <h5 class="fw-bold mb-3">My Attendance History</h5> -->
+
+
+
+
+            <div class="d-flex flex-wrap justify-content-between
+                        align-items-center gap-3 mb-3">
+
+                <h5 class="fw-bold mb-0">My Attendance History</h5>
+
+                <div class="d-flex flex-wrap gap-2">
+
+                    <a href="/user/attendance/export/excel"
+                    class="btn btn-outline-success">
+                        <i class="bi bi-file-earmark-excel me-1"></i>
+                        Download Excel
+                    </a>
+
+                    <a href="/user/attendance/export/pdf"
+                    class="btn btn-outline-danger">
+                        <i class="bi bi-file-earmark-pdf me-1"></i>
+                        Download PDF
+                    </a>
+
+                </div>
+            </div>
+
+
+
+
+
 
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
@@ -255,3 +285,50 @@
     </div>
 
 </div>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const search = document.getElementById("attendanceSearch");
+    const statusFilter = document.getElementById("statusFilter");
+    const monthFilter = document.getElementById("monthFilter");
+    const resetButton = document.getElementById("resetFilters");
+    const rows = document.querySelectorAll(".attendance-row");
+
+    function filterAttendance() {
+        const query = search.value.trim().toLowerCase();
+        const status = statusFilter.value.toLowerCase();
+        const month = monthFilter.value;
+
+        rows.forEach(row => {
+            const date = row.dataset.date || "";
+            const rowStatus = (row.dataset.status || "").toLowerCase();
+
+            const matchesSearch =
+                row.textContent.toLowerCase().includes(query);
+
+            const matchesStatus =
+                !status || rowStatus === status;
+
+            const matchesMonth =
+                !month || date.startsWith(month);
+
+            row.hidden = !(
+                matchesSearch && matchesStatus && matchesMonth
+            );
+        });
+    }
+
+    search.addEventListener("input", filterAttendance);
+    statusFilter.addEventListener("change", filterAttendance);
+    monthFilter.addEventListener("change", filterAttendance);
+
+    resetButton.addEventListener("click", () => {
+        search.value = "";
+        statusFilter.value = "";
+        monthFilter.value = "";
+        filterAttendance();
+    });
+});
+</script>
