@@ -13,14 +13,17 @@ const MongoStore = require('connect-mongo')
 const flash = require('connect-flash');
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
-// const wrapAsync = require('./utils/wrapAsync.js')
-// const { isLoggedIn , isOwner} = require("./middlewares.js");
+
 
 const User = require("./models/user");
 const Admin = require("./models/admin");
+const Attendance = require("./models/attendance");
 const bcrypt = require("bcrypt");
 const { env } = require("process");
 
+
+const ExcelJS = require("exceljs");
+const PDFDocument = require("pdfkit");
 
 
 app.set('view engine','ejs')
@@ -60,9 +63,6 @@ app.use(session(sessionOptions))
 app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())
-// passport.use(new LocalStrategy(User.authenticate()))
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
 
 app.use(express.urlencoded({
     extended: true,
@@ -80,6 +80,9 @@ app.use((req,res,next)=>{
     res.locals.adminId = req.session.adminId || null;
     next()
 })
+
+
+
 
 
 app.post("/addUser", async (req, res) => {
@@ -235,10 +238,45 @@ app.get('/home',async(req,res)=>{
 
         const totalUsers = users.length;
 
-        return res.render("menu/home.ejs", {
+        const today = new Date().toLocaleDateString("en-CA", {
+            timeZone: "Asia/Kolkata"
+        });
+
+        const records = await Attendance.find({
+            userId: { $in: users.map(user => user._id) },
+            date: today
+        });
+
+        const todayStatus = {};
+
+        records.forEach(record => {
+            todayStatus[String(record.userId)] = record.status;
+        });
+
+        let presentCount = 0;
+        let absentCount = 0;
+        let halfDayCount = 0;
+
+        users.forEach(user => {
+            const status = todayStatus[String(user._id)] || "Absent";
+
+            if (status === "Present" || status === "Late") {
+                presentCount++;
+            } else if (status === "Half-Day") {
+                halfDayCount++;
+            } else {
+                absentCount++;
+            }
+        });
+
+        res.render("menu/home.ejs", {
             admin,
             users,
-            totalUsers
+            totalUsers: users.length,
+            todayStatus,
+            presentCount,
+            absentCount,
+            halfDayCount
         });
 
     } catch (error) {
@@ -332,17 +370,236 @@ app.get('/login', (req, res) => {
 app.get("/", async(req, res) => {
     try {
         if (!req.session.adminId) {
-            req.flash("error","Please Signup/login first!")
-            return res.redirect("/signup");
-        } 
-        res.render("menu/home.ejs")
+            req.flash("error", "Please login as admin first");
+            return res.redirect("/login");
+        }
 
+        const admin = await Admin.findById(req.session.adminId);
+
+        if (!admin) {
+            req.session.adminId = null;
+            req.flash("error", "Admin not found. Please login again.");
+            return res.redirect("/login");
+        }
+
+        const users = await User.find({
+            adminId: admin._id
+        }).sort({ username: 1 });
+
+        const totalUsers = users.length;
+
+        const today = new Date().toLocaleDateString("en-CA", {
+            timeZone: "Asia/Kolkata"
+        });
+
+        const records = await Attendance.find({
+            userId: { $in: users.map(user => user._id) },
+            date: today
+        });
+
+        const todayStatus = {};
+
+        records.forEach(record => {
+            todayStatus[String(record.userId)] = record.status;
+        });
+
+        let presentCount = 0;
+        let absentCount = 0;
+        let halfDayCount = 0;
+
+        users.forEach(user => {
+            const status = todayStatus[String(user._id)] || "Absent";
+
+            if (status === "Present" || status === "Late") {
+                presentCount++;
+            } else if (status === "Half-Day") {
+                halfDayCount++;
+            } else {
+                absentCount++;
+            }
+        });
+
+        res.render("menu/home.ejs", {
+            admin,
+            users,
+            totalUsers: users.length,
+            todayStatus,
+            presentCount,
+            absentCount,
+            halfDayCount
+        });
+
+    } catch (error) {
+        console.error("Admin dashboard error:", error);
+        return res.status(500).send("Unable to load admin dashboard");
     }
-    catch(err){
-        console.log(err)
-    }
-    
 })
+
+
+
+/* ADMIN: Download one user's Excel attendance history */
+app.get("/admin/users/:userId/attendance.xlsx", async (req, res) => {
+    try {
+        if (!req.session.adminId) {
+            return res.redirect("/login");
+        }
+
+        const user = await User.findOne({
+            _id: req.params.userId,
+            adminId: req.session.adminId
+        });
+
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        const records = await Attendance.find({
+            userId: user._id
+        }).sort({ date: -1 });
+
+        const workbook = new ExcelJS.Workbook();
+        const sheet = workbook.addWorksheet("Attendance History");
+
+        sheet.columns = [
+            { header: "Date", key: "date", width: 16 },
+            { header: "Check In", key: "checkIn", width: 16 },
+            { header: "Check Out", key: "checkOut", width: 16 },
+            { header: "Working Minutes", key: "workingMinutes", width: 20 },
+            { header: "Status", key: "status", width: 16 }
+        ];
+
+        records.forEach(record => {
+            sheet.addRow({
+                date: record.date || "",
+                checkIn: record.checkIn
+                    ? new Date(record.checkIn).toLocaleString("en-IN", {
+                        timeZone: "Asia/Kolkata"
+                    })
+                    : "--",
+                checkOut: record.checkOut
+                    ? new Date(record.checkOut).toLocaleString("en-IN", {
+                        timeZone: "Asia/Kolkata"
+                    })
+                    : "--",
+                workingMinutes: record.workingMinutes || 0,
+                status: record.status || "Unknown"
+            });
+        });
+
+        sheet.getRow(1).font = { bold: true };
+
+        const filename = `${String(user.username || "user")
+            .replace(/[^a-z0-9_-]/gi, "_")}_attendance.xlsx`;
+
+        res.setHeader(
+            "Content-Type",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${filename}"`
+        );
+
+        await workbook.xlsx.write(res);
+        res.end();
+
+    } catch (err) {
+        console.error("Admin Excel export error:", err);
+        if (!res.headersSent) {
+            res.status(500).send("Excel download failed");
+        }
+    }
+});
+
+
+/* ADMIN: Download one user's PDF attendance history */
+app.get("/admin/users/:userId/attendance.pdf", async (req, res) => {
+    try {
+        if (!req.session.adminId) {
+            return res.redirect("/login");
+        }
+
+        const user = await User.findOne({
+            _id: req.params.userId,
+            adminId: req.session.adminId
+        });
+
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        const records = await Attendance.find({
+            userId: user._id
+        }).sort({ date: -1 });
+
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${String(user.username || "user")
+                .replace(/[^a-z0-9_-]/gi, "_")}_attendance.pdf"`
+        );
+
+        const pdf = new PDFDocument({
+            size: "A4",
+            margin: 40
+        });
+
+        pdf.pipe(res);
+
+        pdf.fontSize(20).text("Attendance History", {
+            align: "center"
+        });
+
+        pdf.moveDown();
+        pdf.fontSize(11).text(`Name: ${user.username}`);
+        pdf.text(`Email: ${user.email || "--"}`);
+        pdf.text(`Department: ${user.department || "--"}`);
+        pdf.moveDown();
+
+        records.forEach((record, index) => {
+            if (pdf.y > 720) {
+                pdf.addPage();
+            }
+
+            const checkIn = record.checkIn
+                ? new Date(record.checkIn).toLocaleString("en-IN", {
+                    timeZone: "Asia/Kolkata"
+                })
+                : "--";
+
+            const checkOut = record.checkOut
+                ? new Date(record.checkOut).toLocaleString("en-IN", {
+                    timeZone: "Asia/Kolkata"
+                })
+                : "--";
+
+            pdf.fontSize(10).text(
+                `${index + 1}. Date: ${record.date || "--"}`
+            );
+            pdf.text(`Check In: ${checkIn}`);
+            pdf.text(`Check Out: ${checkOut}`);
+            pdf.text(`Status: ${record.status || "--"}`);
+            pdf.text(`Working Minutes: ${record.workingMinutes || 0}`);
+            pdf.moveDown();
+        });
+
+        if (records.length === 0) {
+            pdf.text("No attendance records found.");
+        }
+
+        pdf.end();
+
+    } catch (err) {
+        console.error("Admin PDF export error:", err);
+        if (!res.headersSent) {
+            res.status(500).send("PDF download failed");
+        }
+    }
+});
+
+
+
+
 
 app.listen(3000, () => {
   console.log(`app listening on port 3000`)
